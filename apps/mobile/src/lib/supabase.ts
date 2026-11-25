@@ -1,11 +1,15 @@
 import 'react-native-url-polyfill/auto';
 
-import { createClient } from '@supabase/supabase-js';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import * as SecureStore from 'expo-secure-store';
 import { Platform } from 'react-native';
 
 import type { Database } from '@/types/database';
 import { assertLocalShowcaseEndpoint } from '@/lib/showcase-config';
+import { demoClient } from '@/lib/demo-client';
+
+/** Static hosted build: in-browser fictional backend, no database. */
+export const isDemoMode = process.env.EXPO_PUBLIC_DEMO_MODE === '1';
 
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL!;
 const supabaseKey = process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY!;
@@ -39,22 +43,30 @@ const WebStorageAdapter = {
   },
 };
 
-if (!supabaseUrl || !supabaseKey) {
-  throw new Error(
-    'Faltan EXPO_PUBLIC_SUPABASE_URL o EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY.'
-  );
+function createShowcaseClient(): SupabaseClient<Database> {
+  if (isDemoMode) {
+    return demoClient as unknown as SupabaseClient<Database>;
+  }
+
+  if (!supabaseUrl || !supabaseKey) {
+    throw new Error(
+      'Faltan EXPO_PUBLIC_SUPABASE_URL o EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY.'
+    );
+  }
+
+  assertLocalShowcaseEndpoint(supabaseUrl);
+
+  return createClient<Database>(supabaseUrl, supabaseKey, {
+    auth: {
+      storage:
+        Platform.OS === 'web'
+          ? WebStorageAdapter
+          : SecureStoreAdapter,
+      autoRefreshToken: true,
+      persistSession: true,
+      detectSessionInUrl: false,
+    },
+  });
 }
 
-assertLocalShowcaseEndpoint(supabaseUrl);
-
-export const supabase = createClient<Database>(supabaseUrl, supabaseKey, {
-  auth: {
-    storage:
-      Platform.OS === 'web'
-        ? WebStorageAdapter
-        : SecureStoreAdapter,
-    autoRefreshToken: true,
-    persistSession: true,
-    detectSessionInUrl: false,
-  },
-});
+export const supabase = createShowcaseClient();

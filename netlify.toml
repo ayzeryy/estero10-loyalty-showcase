@@ -1,0 +1,11 @@
+# Static web build of the Expo app in serverless demo mode
+# (fictional data in the visitor's browser; no database is contacted).
+[build]
+  base = "apps/mobile"
+  command = "npx expo export --platform web --output-dir dist"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "24.19.0"
+  EXPO_PUBLIC_DEMO_MODE = "1"
+  EXPO_NO_TELEMETRY = "1"

@@ -1,12 +1,13 @@
 import { useState } from 'react';
-import { Alert, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { BrandLogo } from '@/components/brand-logo';
 import { PrimaryButton } from '@/components/primary-button';
 import { Screen } from '@/components/screen';
 import { colors, radii, spacing, typography } from '@/constants/theme';
 import { getAuthErrorMessage } from '@/lib/business-rules';
-import { supabase } from '@/lib/supabase';
+import { DEMO_PASSWORD, resetDemoData } from '@/lib/demo-client';
+import { isDemoMode, supabase } from '@/lib/supabase';
 
 export default function AuthScreen() {
   const [email, setEmail] = useState('');
@@ -101,6 +102,47 @@ export default function AuthScreen() {
           variant="secondary"
         />
       </View>
+
+      {isDemoMode ? (
+        <View style={styles.demoBox}>
+          <Text style={styles.demoTitle}>Demo sin servidor</Text>
+          <Text style={styles.demoText}>
+            Los datos son ficticios y se guardan solo en este navegador. Contraseña de ambas cuentas: {DEMO_PASSWORD}
+          </Text>
+          <View style={styles.demoActions}>
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => {
+                setEmail('customer@example.test');
+                setPassword(DEMO_PASSWORD);
+              }}
+              style={styles.demoChip}
+            >
+              <Text style={styles.demoChipText}>Usar cliente</Text>
+            </Pressable>
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => {
+                setEmail('staff@example.test');
+                setPassword(DEMO_PASSWORD);
+              }}
+              style={styles.demoChip}
+            >
+              <Text style={styles.demoChipText}>Usar staff</Text>
+            </Pressable>
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => {
+                resetDemoData();
+                setErrorMessage('');
+              }}
+              style={styles.demoChip}
+            >
+              <Text style={styles.demoChipText}>Reiniciar datos</Text>
+            </Pressable>
+          </View>
+        </View>
+      ) : null}
     </Screen>
   );
 }
@@ -162,4 +204,40 @@ const styles = StyleSheet.create({
   },
   primaryButton: { marginTop: spacing.xs },
   secondaryButton: { marginTop: spacing.sm },
+  demoBox: {
+    marginTop: spacing.lg,
+    padding: spacing.md,
+    borderRadius: radii.md,
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
+  },
+  demoTitle: {
+    color: colors.textPrimary,
+    fontSize: typography.caption,
+    fontWeight: '800',
+  },
+  demoText: {
+    marginTop: spacing.xs,
+    color: colors.textSecondary,
+    fontSize: typography.caption,
+  },
+  demoActions: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.sm,
+    marginTop: spacing.sm,
+  },
+  demoChip: {
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+    borderRadius: radii.md,
+    borderWidth: 1,
+    borderColor: colors.borderStrong,
+  },
+  demoChipText: {
+    color: colors.textPrimary,
+    fontSize: typography.caption,
+    fontWeight: '700',
+  },
 });
