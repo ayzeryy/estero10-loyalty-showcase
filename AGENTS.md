@@ -1,0 +1,3 @@
+# Estero 10 showcase
+
+This is an independent portfolio extraction. Keep Expo SDK 54 and the existing React / React Native major versions. Extend the existing theme and components. Use only fictional fixtures. Preserve the copied baseline and existing migrations; authorization/RLS/grant changes need review and approval. No remote databases, production changes, commits, pushes, or deployments without explicit authorization. Local scripts must target project `estero10-loyalty-showcase` and API port 55321. Never copy private operational docs, credentials, .env files, or the source repository history here.

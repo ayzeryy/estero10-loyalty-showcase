@@ -1,0 +1,25 @@
+{
+  "name": "estero10-loyalty-showcase",
+  "private": true,
+  "engines": {
+    "node": "24.19.0"
+  },
+  "scripts": {
+    "supabase:start": "node scripts/local.mjs start",
+    "supabase:stop": "node scripts/local.mjs stop",
+    "db:reset": "node scripts/local.mjs reset",
+    "db:lint": "node scripts/local.mjs lint",
+    "demo:setup": "node scripts/local.mjs setup",
+    "test:integration": "node scripts/local.mjs test",
+    "check:public": "node scripts/check-public.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "typecheck": "npm --prefix apps/mobile run typecheck",
+    "lint": "npm --prefix apps/mobile run lint",
+    "test:unit": "npm --prefix apps/mobile test",
+    "web": "npm --prefix apps/mobile run web"
+  },
+  "devDependencies": {
+    "@supabase/supabase-js": "^2.112.3",
+    "supabase": "^2.116.0"
+  }
+}
